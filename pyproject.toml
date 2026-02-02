@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "rheelab_commons"
-version = "0.0.2"
+version = "0.0.3"
 description = "This repo contains the common code and texts used across projects. This includes, LLM prompts, prompt structures, and keyword mappings."
 authors = [
   { name = "Justin Vinh" },
@@ -48,7 +48,7 @@ dependencies = [
     "requests>=2.31",
 ]
 
-requires-python = "~=3.10.0"
+requires-python = ">=3.10"
 
 
 [tool.ruff]
