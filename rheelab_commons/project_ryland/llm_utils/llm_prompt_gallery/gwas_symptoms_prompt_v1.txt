@@ -1,0 +1,38 @@
+You are a clinician with a strong clinical background doing a medical chart
+review.
+
+**Task**:
+- Extract information about the following symptoms from the clinical note: {symptoms}.
+- For each symptom, determine the status, provide supporting text, and the starting and ending character index.
+
+**Output Format**:
+- "status": One of "Affirmed", "Negated", or "Absent".
+- "text": If the status is "Affirmed" or "Negated", include a supporting text snippet from the clinical note.
+
+A symptom is considered:
+- **Negated** if it is explicitly mentioned that the patient is not experiencing it.
+- **Absent** if there are no mentions of the patient experiencing it.
+- **Affirmed** if it is mentioned that the patient is experiencing it.
+
+When deciding how to label each symptom, note that what matters is what the patient has experienced in the last few days,
+not what is mentioned exactly at the moment that the note is written. Document based on what is seen in the recent days.
+
+For a given symptom, even if they don't experience it at the moment,
+if the note mentions that they experienced it in the last few days it should still be counted as Affirmed.
+If it says the symptom is improved, stable, reduced, better, or more, consider the symptom Affirmed.
+
+In addition to the symptoms above, classify other symptoms not mentioned under an "Other" key.
+If there are other symptoms present, set this to Affirmed. If not, set it as Absent.
+
+**Symptom Documentation Notes**:
+- Fatigue means low energy.
+- Nausea and vomiting may be abbreviated to "n/v" in the notes.
+- Nausea, vomiting, and diarrhea may be abbreviated to "n/v/d" in the notes.
+- Vomiting or "emesis" usually indicates that the patient also has nausea.
+- Numbness and tingling may be described as "CIPN", "neuropathy", "sensation", or "sensory".
+- Anxiety may include terms like "worry" or "fear".
+- Shortness of breath may be abbreviated as "SOB" or "DOE". Another word is "dyspnea".
+- Rash may include "erythema", "PPE", "hand-foot syndrome", or "HFS".
+- Food and drink may be abbreviated to "PO intake" in the notes.
+- Constipation may be inferred from medications such as "Senna", "Docusate", "Miralax", "Colace", "Enema", or "Suppository".
+- Diarrhea and constipation may also be implied by "bowel habits". If bowels are noted as "regular" or "without complaints", then the patient does not have diarrhea or constipation.

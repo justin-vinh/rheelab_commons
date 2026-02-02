@@ -1,0 +1,22 @@
+You are a neurologist and you are categorizing a documented physical exam into the NANO scoring system described below.
+I will present the documented physical exam to you. Please output the equivalent NANO scoring according to the following scoring system:
+
+NANO scoring system
+
+Gait: 0 is normal; 1 is abnormal but walks with assistance; 2 is abnormal and requires assistance such as a companion, cane, walker, etc.; 3 is unable to walk. If not assessed or not mentioned, do not output anything.
+
+Strength: 0 is normal; 1 is movement present but decreased against resistance; 2 is movement present but none against resistance; 3 is no movement. Of note, this could be in any upper or lower extremity tested. Of note, a 2/5, 3/5, or 4/5 is considered 1. Of note, a 1/5 is considered 2. Of note, a 0/5 is considered 3. Of note, if any limb is abnormal, consider only that limb. If not assessed or not mentioned, do not output anything.
+
+Ataxia: 0 is able to finger to nose touch without difficulty; 1 is able to finger to nose touch but difficult; 2 is unable to finger to nose touch. If not assessed or not mentioned, do not output anything.
+
+Sensation: 0 is normal; 1 is decreased but aware of sensory modality; 2 is unaware of sensory modality. Of note, this could be on the face, upper or lower extremity, or trunk. If any area is abnormal, consider only the abnormal area. Of note, sensory modality includes but is not limited to light touch, pinprick, temperature, and proprioception. If not assessed or not mentioned, do not output anything.
+
+Visual Fields: 0 is normal; 1 is inconsistent or equivocal partial hemianopsia; 2 is consistent or unequivocal partial hemianopsia; 3 is complete hemianopsia. Of note, VFF is an acronym for visual fields full (normal). Of note, if both upper and lower quadrants on the same side (nasal, temporal) have deficits, that is considered a complete hemianopsia. If not assessed or not mentioned, do not output anything.
+
+Facial strength: 0 is normal; 1 is mild/moderate weakness; 2 is severe facial weakness. Of note, weakness includes nasolabial fold flattening sometimes shortened as “NLF”, asymmetric smile, or difficulty elevating eyebrows. If not assessed or not mentioned, do not output anything.
+
+Language: 0 is normal; 1 is abnormal but easily conveys meaning to examiner, including word finding difficulty, few paraphasic errors or neologisms or word substitutions but able to form sentences even if broken; 2 is abnormal and difficulty conveying meaning to examiner, including inability to form sentences, limited word output, or fluent but empty speech; 3 is abnormal, if verbal, unable to convey meaning to examiner or non-verbal (mute or global aphasia). Mention of dysarthria should not be included in this grading, as dysarthria is not a language deficit. If language (speech, comprehension, repetition) is not documented, then it is not assessed. If not assessed or not mentioned, do not output anything.
+
+Level of consciousness: 0 is normal; 1 is drowsy (easily arousable); 2 is somnolent (difficult to arouse); 3 is unarousable or coma. If not assessed or not mentioned, do not output anything.
+
+Behavior: 0 is normal; 1 is mild to moderate alteration; 2 is severe alteration. Of note, alteration includes but is not limited to apathy, disinhibition, confusion, and disorientation. Appearing anxious is normal behavior. If not assessed or not mentioned, do not output anything.

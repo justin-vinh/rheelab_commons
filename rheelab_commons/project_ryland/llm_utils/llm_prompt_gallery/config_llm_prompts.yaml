@@ -1,0 +1,66 @@
+# ----------------------------------------------------------------------------
+# LLM Prompt Configuration File
+# Author: Justin Vinh
+# Created: 2025.10.06
+
+# Purpose:
+# Provide a centralized database of all project prompts
+# ----------------------------------------------------------------------------
+
+# NANO Project Prompts
+# ----------------------------------------------------------------------------
+nano_prompt_progress_notes_v1:
+  filename: nano_prompt_progress_notes_v1.txt
+  description: |
+    Standard prompt for extracting NANO data from progress notes.
+    (Originally developed as part of the nuero onc nano project)
+  author: Zach Tentor & John Rhee
+  date: 2025.10.06
+
+nano_prompt_imaging_v1:
+  filename: nano_prompt_imaging_v1.txt
+  description: |
+    Standard prompt for extracting secondary NANO data from imaging notes.
+    (Originally developed as part of the nuero onc nano project)
+  author: Zach Tentor
+  date: 2025.10.09
+
+nano_prompt_imaging_v2:
+  filename: nano_prompt_imaging_v2.txt
+  description: |
+    Revised prompt for extracting secondary NANO data from imaging notes.
+    (Originally developed as part of the nuero onc nano project)
+  author: Justin Vinh
+  date: 2025.10.13
+
+nano_prompt_pathology_v1:
+  filename: nano_prompt_pathology_v1.txt
+  description: |
+    Standard prompt for extracting secondary NANO data from pathology notes.
+  author: Zach Tentor
+  date: 2025.10.09
+
+nano_prompt_pathology_v2:
+  filename: nano_prompt_pathology_v2.txt
+  description: |
+    Revised prompt for extracting secondary NANO data from pathology notes.
+  author: Justin Vinh
+  date: 2025.10.14
+
+
+# GWAS Project Prompts
+# ----------------------------------------------------------------------------
+gwas_symptoms_prompt_v1:
+  filename: gwas_symptoms_prompt_v1.txt
+  description: |
+    Standard prompt for symptoms extraction.
+    (Originally developed as part of the scalable tracking of symptoms project)
+  author: Zach Tentor & Justin Vinh
+  date: 2025.10.07
+
+gwas_test_prompt:
+  filename: test_prompt.txt
+  description: |
+    test prompt
+  author: Justin Vinh
+  date: 2025.10.08

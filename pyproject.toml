@@ -1,0 +1,40 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "rheelab_commons"
+version = "0.0.1"
+description = "This repo contains the common code and texts used across projects. This includes, LLM prompts, prompt structures, and keyword mappings."
+authors = [
+  { name = "Justin Vinh" },
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License"
+]
+dependencies = [
+    "loguru",
+    "pip",
+    "python-dotenv",
+    "ruff",
+    "tqdm",
+    "typer",
+]
+requires-python = "~=3.10.0"
+
+
+[tool.ruff]
+line-length = 99
+src = ["rheelab_commons"]
+include = ["pyproject.toml", "rheelab_commons/**/*.py"]
+
+[tool.ruff.lint]
+extend-select = ["I"]  # Add import sorting
+
+[tool.ruff.lint.isort]
+known-first-party = ["rheelab_commons"]
+force-sort-within-sections = true
+
