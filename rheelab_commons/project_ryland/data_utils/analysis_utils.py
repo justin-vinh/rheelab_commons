@@ -149,7 +149,18 @@ def extract_label_studio_label_status(
         if isinstance(x, (list, dict)):
             return x
         if isinstance(x, str):
-            return json.loads(x)
+            s = x.strip()
+            # 1) Try proper JSON first
+            try:
+                return json.loads(s)
+            except Exception:
+                pass
+            # 2) Fallback: Python literal (single quotes, True/False/None, etc.)
+            try:
+                v = ast.literal_eval(s)
+                return v if isinstance(v, (list, dict)) else None
+            except Exception:
+                return None
         return None
 
     # Recursive function to find all "labels"
