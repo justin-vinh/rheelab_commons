@@ -61,6 +61,9 @@ def extract_label_studio_label_status(
         0 = label absent
     """
 
+    # Normalize to lowercase
+    target_labels = [lab.lower() for lab in target_labels]
+
     # Create output column names
     col_names = (
         [f"{lab.lower()}{col_name_suffix}" for lab in target_labels]
@@ -93,14 +96,23 @@ def extract_label_studio_label_status(
             found = set()
 
             for item in items:
-                # Format A: flat span dict
-                if "labels" in item and isinstance(item.get("labels"), list):
+                if not isinstance(item, dict):
+                    continue
+
+                # Direct Label Studio format
+                if "value" in item:
+                    labels = item.get("value", {}).get("labels", [])
+                    found.update([l.lower() for l in labels])
+
+                # Backup: flat format
+                if "labels" in item:
                     found.update([l.lower() for l in item["labels"]])
 
-                # Format B: nested Label Studio annotation structure
-                for r in (item.get("result") or []):
-                    labels = (r.get("value") or {}).get("labels") or []
-                    found.update([l.lower() for l in labels])
+                # Backup: nested "result" format
+                if "result" in item:
+                    for r in item.get("result", []):
+                        labels = r.get("value", {}).get("labels", [])
+                        found.update([l.lower() for l in labels])
 
             # Set indicator columns
             for lab, col in zip(target_labels, col_names):
