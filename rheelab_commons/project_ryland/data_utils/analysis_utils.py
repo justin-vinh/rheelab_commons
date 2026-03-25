@@ -95,12 +95,12 @@ def extract_label_studio_label_status(
             for item in items:
                 # Format A: flat span dict
                 if "labels" in item and isinstance(item.get("labels"), list):
-                    found.update(item["labels"])
+                    found.update([l.lower() for l in item["labels"]])
 
                 # Format B: nested Label Studio annotation structure
                 for r in (item.get("result") or []):
                     labels = (r.get("value") or {}).get("labels") or []
-                    found.update(labels)
+                    found.update([l.lower() for l in labels])
 
             # Set indicator columns
             for lab, col in zip(target_labels, col_names):
