@@ -20,61 +20,129 @@ import pandas as pd
 
 # FUNCTIONS TO PROCESS LABEL STUDIO OUTPUTS
 # -----------------------------------------------------------------------------
+# def extract_label_studio_label_status(
+#     df: pd.DataFrame,
+#     label_col: str,
+#     target_labels: List[str],
+#     col_name_suffix: Optional[str] = "_status",
+# ) -> pd.DataFrame:
+#     """
+#     Extract binary indicator columns for specified labels from a Label Studio
+#     annotation column.
+#
+#     This function parses JSON-formatted Label Studio outputs stored in
+#     `label_col` and creates one binary column per target label indicating
+#     whether that label was assigned to the row.
+#
+#     Supported input formats:
+#     1) Flat span dictionaries:
+#         {"start": ..., "end": ..., "labels": [...]}
+#
+#     2) Standard Label Studio annotation format:
+#         {"result": [{"value": {"labels": [...]}}]}
+#
+#     Parameters
+#     ----------
+#     df : pd.DataFrame
+#         Input DataFrame containing Label Studio annotations.
+#     label_col : str
+#         Column name containing JSON annotations (string or object).
+#     target_labels : List[str]
+#         Labels to extract.
+#     col_name_suffix : Optional[str], default="_status"
+#         Suffix added to generated column names.
+#         If None, original label names are used as column names.
+#
+#     Returns
+#     -------
+#     pd.DataFrame
+#         DataFrame with additional binary columns for each target label.
+#         1 = label present
+#         0 = label absent
+#     """
+#
+#     # Normalize to lowercase
+#     target_labels = [lab.lower() for lab in target_labels]
+#
+#     # Create output column names
+#     col_names = (
+#         [f"{lab.lower()}{col_name_suffix}" for lab in target_labels]
+#         if col_name_suffix else target_labels
+#     )
+#
+#     # Initialize all label columns to 0
+#     for col in col_names:
+#         df[col] = 0
+#
+#     # Convert stored value into Python object (list/dict)
+#     def coerce_to_obj(x: Any):
+#         if pd.isna(x):
+#             return None
+#         if isinstance(x, (list, dict)):
+#             return x
+#         if isinstance(x, str):
+#             return json.loads(x)
+#         return None
+#
+#     # Iterate row-by-row through annotation column
+#     for idx, x in df[label_col].items():
+#         try:
+#             obj = coerce_to_obj(x)
+#             if not obj:
+#                 continue
+#
+#             # Ensure iterable structure
+#             items = obj if isinstance(obj, list) else [obj]
+#             found = set()
+#
+#             for item in items:
+#                 if not isinstance(item, dict):
+#                     continue
+#
+#                 # Direct Label Studio format
+#                 if "value" in item:
+#                     labels = item.get("value", {}).get("labels", [])
+#                     found.update([l.lower() for l in labels])
+#
+#                 # Backup: flat format
+#                 if "labels" in item:
+#                     found.update([l.lower() for l in item["labels"]])
+#
+#                 # Backup: nested "result" format
+#                 if "result" in item:
+#                     for r in item.get("result", []):
+#                         labels = r.get("value", {}).get("labels", [])
+#                         found.update([l.lower() for l in labels])
+#
+#             # Set indicator columns
+#             for lab, col in zip(target_labels, col_names):
+#                 if lab in found:
+#                     df.at[idx, col] = 1
+#
+#         except Exception:
+#             # Skip malformed rows silently
+#             continue
+#
+#     return df
+
+
 def extract_label_studio_label_status(
     df: pd.DataFrame,
     label_col: str,
     target_labels: List[str],
     col_name_suffix: Optional[str] = "_status",
 ) -> pd.DataFrame:
-    """
-    Extract binary indicator columns for specified labels from a Label Studio
-    annotation column.
 
-    This function parses JSON-formatted Label Studio outputs stored in
-    `label_col` and creates one binary column per target label indicating
-    whether that label was assigned to the row.
-
-    Supported input formats:
-    1) Flat span dictionaries:
-        {"start": ..., "end": ..., "labels": [...]}
-
-    2) Standard Label Studio annotation format:
-        {"result": [{"value": {"labels": [...]}}]}
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Input DataFrame containing Label Studio annotations.
-    label_col : str
-        Column name containing JSON annotations (string or object).
-    target_labels : List[str]
-        Labels to extract.
-    col_name_suffix : Optional[str], default="_status"
-        Suffix added to generated column names.
-        If None, original label names are used as column names.
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame with additional binary columns for each target label.
-        1 = label present
-        0 = label absent
-    """
-
-    # Normalize to lowercase
     target_labels = [lab.lower() for lab in target_labels]
 
-    # Create output column names
     col_names = (
-        [f"{lab.lower()}{col_name_suffix}" for lab in target_labels]
+        [f"{lab}{col_name_suffix}" for lab in target_labels]
         if col_name_suffix else target_labels
     )
 
-    # Initialize all label columns to 0
     for col in col_names:
         df[col] = 0
 
-    # Convert stored value into Python object (list/dict)
     def coerce_to_obj(x: Any):
         if pd.isna(x):
             return None
@@ -84,43 +152,36 @@ def extract_label_studio_label_status(
             return json.loads(x)
         return None
 
-    # Iterate row-by-row through annotation column
+    # Recursive function to find all "labels"
+    def find_labels(obj):
+        found = set()
+
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k == "labels" and isinstance(v, list):
+                    found.update([str(i).lower() for i in v])
+                else:
+                    found.update(find_labels(v))
+
+        elif isinstance(obj, list):
+            for item in obj:
+                found.update(find_labels(item))
+
+        return found
+
     for idx, x in df[label_col].items():
         try:
             obj = coerce_to_obj(x)
-            if not obj:
+            if obj is None:
                 continue
 
-            # Ensure iterable structure
-            items = obj if isinstance(obj, list) else [obj]
-            found = set()
+            found = find_labels(obj)
 
-            for item in items:
-                if not isinstance(item, dict):
-                    continue
-
-                # Direct Label Studio format
-                if "value" in item:
-                    labels = item.get("value", {}).get("labels", [])
-                    found.update([l.lower() for l in labels])
-
-                # Backup: flat format
-                if "labels" in item:
-                    found.update([l.lower() for l in item["labels"]])
-
-                # Backup: nested "result" format
-                if "result" in item:
-                    for r in item.get("result", []):
-                        labels = r.get("value", {}).get("labels", [])
-                        found.update([l.lower() for l in labels])
-
-            # Set indicator columns
             for lab, col in zip(target_labels, col_names):
                 if lab in found:
                     df.at[idx, col] = 1
 
         except Exception:
-            # Skip malformed rows silently
             continue
 
     return df
