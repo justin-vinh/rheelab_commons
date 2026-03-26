@@ -144,43 +144,34 @@ def extract_label_studio_label_status(
         df[col] = 0
 
     def coerce_to_obj(x: Any):
-        if pd.isna(x):
-            return None
+        # pass through real objects first
         if isinstance(x, (list, dict)):
             return x
-        if not isinstance(x, str):
+
+        # now handle missing scalars safely
+        if x is None or x is pd.NA:
+            return None
+        if isinstance(x, float) and pd.isna(x):
             return None
 
-        s = x.strip()
-
-        for _ in range(4):
-            # 1) JSON
-            try:
-                v = json.loads(s)
-            except Exception:
-                v = None
-
-            # 2) Python literal
-            if v is None:
+        if isinstance(x, str):
+            s = x.strip()
+            for _ in range(3):
                 try:
-                    v = ast.literal_eval(s)
+                    v = json.loads(s)
                 except Exception:
                     v = None
-
-            if isinstance(v, (list, dict)):
-                return v
-            if isinstance(v, str):
-                s = v.strip()
-                continue
-
-            # 3) Unescape sequences like \' and \n, then loop and try again
-            try:
-                s2 = codecs.decode(s, "unicode_escape")
-            except Exception:
+                if v is None:
+                    try:
+                        v = ast.literal_eval(s)
+                    except Exception:
+                        return None
+                if isinstance(v, (list, dict)):
+                    return v
+                if isinstance(v, str):
+                    s = v.strip()
+                    continue
                 return None
-            if s2 == s:
-                return None
-            s = s2.strip()
 
         return None
 
