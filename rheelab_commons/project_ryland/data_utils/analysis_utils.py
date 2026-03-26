@@ -153,20 +153,19 @@ def extract_label_studio_label_status(
 
         s = x.strip()
 
-        # try a few rounds in case it's encoded as a string-of-a-string
-        for _ in range(3):
-            # Try JSON
+        for _ in range(4):
+            # 1) JSON
             try:
                 v = json.loads(s)
             except Exception:
                 v = None
 
-            # Fallback: Python literal (single quotes)
+            # 2) Python literal
             if v is None:
                 try:
                     v = ast.literal_eval(s)
                 except Exception:
-                    return None
+                    v = None
 
             if isinstance(v, (list, dict)):
                 return v
@@ -174,7 +173,14 @@ def extract_label_studio_label_status(
                 s = v.strip()
                 continue
 
-            return None
+            # 3) Unescape sequences like \' and \n, then loop and try again
+            try:
+                s2 = codecs.decode(s, "unicode_escape")
+            except Exception:
+                return None
+            if s2 == s:
+                return None
+            s = s2.strip()
 
         return None
 
@@ -207,8 +213,8 @@ def extract_label_studio_label_status(
                 if lab in found:
                     df.at[idx, col] = 1
 
-        except Exception:
-            continue
+        except Exception as e:
+            print("Failed row", idx, type(x), repr(str(x)[:200]), e)
 
     return df
 
